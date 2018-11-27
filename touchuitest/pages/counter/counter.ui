@@ -1,0 +1,97 @@
+<template>
+  <ui-page>
+    <ui-view id="frame">
+      <ui-text>请输入倒计时的时间（秒）：</ui-text>
+      <ui-input bindinput="bindTimeInput" auto-focus></ui-input>
+      <ui-view>剩余时间：{{remainTime}} 秒</ui-view>
+    </ui-view>
+    <ui-button bindtap="start" type="primary" ui:if="{{counter==null}}">开始！</ui-button>
+    <ui-button bindtap="end" type="warn" ui:else="{{  }}">停止！</ui-button>
+  </ui-page>
+</template>
+
+<script>
+export default {
+  config: {
+    navigationBarTitleText: 'counter'
+  },
+
+  data() {
+    return {
+      inputTime: null,
+      remainTime: 0,
+      counter: null
+    }
+  },
+
+  methods: {
+    setRemainTime(remainTime) {
+      let retTime = 0
+      let nRemainTime = Number(remainTime)
+      if (nRemainTime > 0) {
+        retTime = nRemainTime.toFixed(2)
+      }
+      this.remainTime = retTime
+    },
+
+    end() {
+      clearInterval(this.counter)
+      this.counter = null
+    },
+    start() {
+      if (isNaN(this.inputTime) || this.inputTime < 0) {
+        ui.showToast({
+          title: '请输入正确的时间',
+          icon: 'none',
+          duration: 2000
+        })
+        this.inputTime = null
+        return
+      }
+      this.remainTime = this.inputTime
+      this.counter = setInterval(() => {
+        if (this.remainTime > 0) {
+          this.remainTime -= 0.01
+          this.setRemainTime(this.remainTime)
+        } else {
+          ui.showToast({
+            title: '时间到！',
+            icon: 'none',
+            duration: 2000
+          })
+          this.end()
+        }
+      }, 10)
+    },
+    bindTimeInput(e) {
+      this.inputTime = e
+    }
+  }
+}
+</script>
+
+<style lang="less">
+#frame {
+  margin: 0 50rpx;
+  text-align: center;
+}
+
+.ui-button {
+  width: 80%;
+  margin: 10px auto;
+}
+
+.ui-input {
+  height: 32px;
+  width: 250px;
+  margin-right: 20px;
+  border-style: solid;
+  border-color: #d8d8d8;
+  border-width: 1px;
+  margin: 0 auto;
+}
+
+input:focus {
+  border-color: #3385ff;
+}
+</style>

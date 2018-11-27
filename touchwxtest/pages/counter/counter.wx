@@ -1,0 +1,93 @@
+<template>
+  <view id="frame">
+    <text>请输入倒计时的时间（秒）：</text>
+    <input bindinput="bindTimeInput" auto-focus/>
+    <view>剩余时间：{{remainTime}} 秒</view>
+  </view>
+  <button wx:if="{{counter==null}}" bindtap="start" type="primary">开始！</button>
+  <button wx:else bindtap="end" type="warn">停止！</button>
+</template>
+
+<script>
+export default {
+  config: {
+    navigationBarTitleText: 'counter'
+  },
+  data: {
+    inputTime: null,
+    remainTime: 0,
+    counter: null
+  },
+  bindTimeInput(e) {
+    this.data.inputTime = e.detail.value
+  },
+  start() {
+    if (isNaN(this.data.inputTime) || this.data.inputTime < 0) {
+      wx.showToast({
+        title: '请输入正确的时间',
+        icon: 'none',
+        duration: 2000
+      })
+      this.data.inputTime = null
+      return
+    }
+    this.setData({
+      remainTime: this.data.inputTime
+    })
+    this.setData({
+      counter: setInterval(() => {
+        if (this.data.remainTime > 0) {
+          this.data.remainTime -= 0.01
+          this.setRemainTime(this.data.remainTime)
+        } else {
+          wx.showToast({
+            title: '时间到！',
+            icon: 'none',
+            duration: 2000
+          })
+          this.end()
+        }
+      }, 10)
+    })
+  },
+  end() {
+    clearInterval(this.data.counter)
+    this.setData({
+      counter: null
+    })
+  },
+  setRemainTime(remainTime) {
+    let retTime = 0
+    let nRemainTime = Number(remainTime)
+    if (nRemainTime > 0) {
+      retTime = nRemainTime.toFixed(2)
+    }
+    this.setData({
+      remainTime: retTime
+    })
+  }
+}
+</script>
+
+<style>
+#frame {
+  margin: 0 50rpx;
+  text-align: center;
+}
+button {
+  width: 80%;
+  margin: 10px auto;
+}
+input {
+  height: 32px;
+  width: 250px;
+  margin-right: 20px;
+  border-style: solid;
+  border-color: #d8d8d8;
+  border-width: 1px;
+  margin: 0 auto;
+}
+input:focus {
+  border-color: #3385ff;
+}
+</style>

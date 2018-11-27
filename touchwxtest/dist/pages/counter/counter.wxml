@@ -1,0 +1,7 @@
+<view id="frame">
+  <text>请输入倒计时的时间（秒）：</text>
+  <input bindinput="bindTimeInput" auto-focus></input>
+  <view>剩余时间：{{remainTime}} 秒</view>
+</view>
+<button wx:if="{{counter==null}}" bindtap="start" type="primary">开始！</button>
+<button wx:else="" bindtap="end" type="warn">停止！</button>
